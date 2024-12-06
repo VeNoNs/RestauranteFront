@@ -10,6 +10,7 @@ interface Empresa {
 interface Local {
   idLocal: number;
   ubicacion: string;
+  empresa: Empresa; // Relación con la empresa
 }
 
 interface ModalSeleccionarEmpresaLocalProps {
@@ -43,11 +44,11 @@ const ModalSeleccionarEmpresaLocal: React.FC<ModalSeleccionarEmpresaLocalProps> 
       const fetchLocales = async () => {
         try {
           const response = await axios.get('http://localhost:8080/local/api/verlocales');
-          
+  
           console.log("Locales obtenidos:", response.data); // Verifica que el dato recibido es correcto
   
-          // Accedemos correctamente a la relación empresa en cada local
-          const localesFiltrados = response.data.filter((local: any) => local.empresa?.idEmpresa === empresaSeleccionada);
+          // Filtrar locales por la empresa seleccionada
+          const localesFiltrados = response.data.filter((local: Local) => local.empresa.idEmpresa === empresaSeleccionada);
           console.log("Locales filtrados:", localesFiltrados);
           setLocales(localesFiltrados);
         } catch (error) {
@@ -58,6 +59,7 @@ const ModalSeleccionarEmpresaLocal: React.FC<ModalSeleccionarEmpresaLocalProps> 
       fetchLocales();
     }
   }, [empresaSeleccionada]);
+  
 
   const handleConfirmarSeleccion = () => {
     if (empresaSeleccionada && localSeleccionado) {

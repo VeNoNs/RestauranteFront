@@ -1,6 +1,6 @@
 'use client';
 import "@/styles/globals.css";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ModalCarrito from '@/components/cliente/ModalCarrito';
 import ModalSeleccionarEmpresaLocal from '@/components/cliente/ModalSeleccionarEmpresaLocal'; // Importar el modal de selección
 import axios from 'axios'; // Asegúrate de importar axios

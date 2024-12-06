@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Alert } from 'reactstrap';
+import { AxiosError } from 'axios'; 
 
 interface ProductoCarrito {
   idComida: string;
@@ -59,56 +60,63 @@ const ModalCarrito: React.FC<ModalCarritoProps> = ({ carrito, setCarrito, onClos
     }
   };
 
-  const handleCompra = async () => {
-    try {
-      for (const producto of carrito) {
-        if (!mesaSeleccionada) {
-          setErrorMesa('Debes seleccionar una mesa antes de realizar la compra.');
-          return;
-        }
 
-        const nuevaOrden = {
-          cantidad: producto.cantidad,
-          subTotal: producto.precio * producto.cantidad,
-          comida: { idComida: producto.idComida },
-          mesa: { idMesa: mesaSeleccionada },
-          estado: "pendiente",
-        };
-
-        const respuestaOrden = await axios.post('http://localhost:8080/orden/api/nueva', nuevaOrden);
-        const ordenCreada = respuestaOrden.data;
-
-        const nuevoPago = {
-          fechaPago: new Date().toISOString().split('T')[0],
-          monto: producto.precio * producto.cantidad,
-          orden: { idOrden: ordenCreada.idOrden },
-        };
-
-        const respuestaPago = await axios.post('http://localhost:8080/pago/api/nuevo', nuevoPago);
-        const pagoCreado = respuestaPago.data;
-
-        const nuevoComprobante = {
-          fechaComprobante: new Date().toISOString().split('T')[0],
-          pago: { idPago: pagoCreado.idPago },
-        };
-
-        await axios.post('http://localhost:8080/api/comprobante/crear', nuevoComprobante);
+const handleCompra = async () => {
+  try {
+    for (const producto of carrito) {
+      if (!mesaSeleccionada) {
+        setErrorMesa('Debes seleccionar una mesa antes de realizar la compra.');
+        return;
       }
 
-      // Mostrar mensaje de éxito en el Alert
-      setAlertMessage('Compra realizada con éxito');
-      setAlertColor('success');
-      setShowAlert(true);
+      const nuevaOrden = {
+        cantidad: producto.cantidad,
+        subTotal: producto.precio * producto.cantidad,
+        comida: { idComida: producto.idComida },
+        mesa: { idMesa: mesaSeleccionada },
+        estado: "pendiente",
+      };
 
-      setCarrito([]);
-      onClose();
-    } catch (error: any) {
-      console.error('Error al realizar la compra:', error.response ? error.response.data : error.message);
-      setAlertMessage('Error al realizar la compra');
-      setAlertColor('danger');
-      setShowAlert(true);
+      const respuestaOrden = await axios.post('http://localhost:8080/orden/api/nueva', nuevaOrden);
+      const ordenCreada = respuestaOrden.data;
+
+      const nuevoPago = {
+        fechaPago: new Date().toISOString().split('T')[0],
+        monto: producto.precio * producto.cantidad,
+        orden: { idOrden: ordenCreada.idOrden },
+      };
+
+      const respuestaPago = await axios.post('http://localhost:8080/pago/api/nuevo', nuevoPago);
+      const pagoCreado = respuestaPago.data;
+
+      const nuevoComprobante = {
+        fechaComprobante: new Date().toISOString().split('T')[0],
+        pago: { idPago: pagoCreado.idPago },
+      };
+
+      await axios.post('http://localhost:8080/api/comprobante/crear', nuevoComprobante);
     }
-  };
+
+    // Mostrar mensaje de éxito en el Alert
+    setAlertMessage('Compra realizada con éxito');
+    setAlertColor('success');
+    setShowAlert(true);
+
+    setCarrito([]);
+    onClose();
+  } catch (error) {
+    const axiosError = error as AxiosError; // Castea el error a AxiosError
+    console.error(
+      'Error al realizar la compra:',
+      axiosError.response ? axiosError.response.data : axiosError.message
+    );
+
+    setAlertMessage('Error al realizar la compra');
+    setAlertColor('danger');
+    setShowAlert(true);
+  }
+};
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
