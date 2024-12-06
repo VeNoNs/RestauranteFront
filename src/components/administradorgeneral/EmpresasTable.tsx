@@ -1,16 +1,8 @@
 import React from 'react';
+import { Empresa } from '@/types/empresa';
 
 
-interface Empresa {
-  id: number;
-  nombre: string;
-  telefono: string;
-  correo: string;
-  administrador?: {
-    nombreAdmin: string;
-    correoAdmin: string;
-  };
-}
+
 
 const EmpresasTable: React.FC<{ onSelectEmpresa: (empresa: Empresa) => void }> = ({ onSelectEmpresa }) => {
   const empresas: Empresa[] = [

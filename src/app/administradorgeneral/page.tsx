@@ -4,14 +4,13 @@ import React, { useState } from 'react';
 import EmpresasTable from '@/components/administradorgeneral/EmpresasTable';
 import AgregarModal from '@/components/administradorgeneral/AgregarModal';
 import EditarModal from '@/components/administradorgeneral/EditarModal';
+import { Empresa } from '@/types/empresa';
 
-interface Empresa {
-    id: number;
-    nombre: string;
-    empresa: string;
-    telefono: string;
-    correo: string;
+
+  interface EmpresasTableProps {
+    onSelectEmpresa: (empresa: Empresa) => void;
   }
+  
   
   const AdminGeneralPage: React.FC = () => {
     const [selectedEmpresa, setSelectedEmpresa] = useState<Empresa | null>(null);
@@ -79,7 +78,8 @@ interface Empresa {
               </button>
             </div>
           </div>
-          <EmpresasTable onSelectEmpresa={handleEditarClick} />
+          <EmpresasTable onSelectEmpresa={handleEditarClick as (empresa: Empresa) => void} />
+
   
           {showAgregarModal && <AgregarModal closeModal={closeModal} />}
           {showEditarModal && selectedEmpresa && (
