@@ -7,9 +7,6 @@ import EditarModal from '@/components/administradorgeneral/EditarModal';
 import { Empresa } from '@/types/empresa';
 
 
-  interface EmpresasTableProps {
-    onSelectEmpresa: (empresa: Empresa) => void;
-  }
   
   
   const AdminGeneralPage: React.FC = () => {
